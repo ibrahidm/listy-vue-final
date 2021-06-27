@@ -34,7 +34,7 @@ I don't work for them, I just think this is a really cool tool!
 
 To start the server: 
 ```
-$ yarn serve
+$ yarn start
 ```
 
 ### Compile & Minify for Production
