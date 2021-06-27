@@ -28,7 +28,9 @@ $ yarn serve
 ```
 
 ### Launch Server / Database
-This project uses [json-server](https://github.com/typicode/json-server) to simulate a RESTful API / database! I highly recommend checking it out for any of your future front-end projects! Great way to get started quickly which can prevent inter-team delays (or lets you freely move between front-end and back-end if you are a full-stack developer still creating your back-end endpoints!). 
+This project uses [json-server](https://github.com/typicode/json-server) to simulate a RESTful API / database! I highly recommend checking it out for any of your future front-end projects! Great way to get started quickly which can prevent inter-team delays and allows you to effectively work on your front-end, even if you are still building out your back-end endpoints. 
+
+I don't work for them, I just think this is a really cool tool!
 
 To start the server: 
 ```
