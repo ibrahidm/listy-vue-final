@@ -1,7 +1,8 @@
 export default interface IItem {
-    id?: number | string;
-    ts?: number
-    desc?: string
-    title: string
-    comp: boolean 
+    id?: number;
+    ts?: number;
+    desc?: string;
+    title: string;
+    comp: boolean;
+    cat?: number | string;
 }

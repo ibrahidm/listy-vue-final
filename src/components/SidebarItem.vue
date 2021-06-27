@@ -2,16 +2,14 @@
     <div class="sidebar-item"
         @mouseenter="userDidHover()"
         @mouseleave="userDidStopHovering()"
-        :id="`sidebarItem${category.id}`"
     >
-        <router-link class="sidebar-link"
-            :to="`/${category.id ? category.id : '#'}`"
+        <div class="sidebar-link"
+            @click="$emit('categorySelected', category.id)"
         >
             {{ category.name }}
-        </router-link>
+        </div>
         <transition name="slide">
             <div class="delete-button"
-                :id="`deleteItem${category.id}`"
                 v-show="showOptions && category.id"
                 @click="processDeleteCategory(category.id)"
             >
@@ -33,7 +31,7 @@ export default {
         }
     },
 
-    setup (props: Record<string, unknown>, { emit }: { emit: (event: string, ...args: unknown[]) => void }): Record<string, unknown> {
+    setup (_: Record<string, unknown>, { emit }: { emit: (event: string, ...args: unknown[]) => void }): Record<string, unknown> {
         const mouseleaveHasBeenCalled = ref(false)
         const showOptions = ref(false)
         const deleteCategory = inject(DeleteCategoryKey)
@@ -52,19 +50,10 @@ export default {
             showOptions.value = false
         }
 
-        const processDeleteCategory = async (id: string) => {
+        const processDeleteCategory = async (id: number) => {
             if (deleteCategory) await deleteCategory(id)
             emit('categoryDeleted', id)
         }
-
-        // onMounted(async () => {
-        //     const cat = { ...props.category as ICategory }
-        //     let itemHeight;
-        //     const item = document.getElementById(`sidebarItem${cat.id}`)
-        //     if (item) itemHeight = getComputedStyle(item)?.height
-        //     const deleteBtn = document.getElementById(`deleteItem${cat.id}`)
-        //     if (deleteBtn && itemHeight) deleteBtn.style.height = itemHeight
-        // })
 
         return {
             mouseleaveHasBeenCalled,

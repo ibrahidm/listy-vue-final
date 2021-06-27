@@ -1,70 +1,83 @@
 <template>
-	<Sidebar 
+	<AppSidebar 
 		:categories="categories"
-		@categoryDeleted="categoryDeleted($event)"
+		@categoryDeleted="finishDeletion($event)"
+		@categorySelected="categorySelected($event)"
 	/>
 	<div class="main">
-		<router-view/>
-	</div>	
+		<div class="container">
+			<ListCard 
+				:category="currentCategory"
+				:items="items"
+				@saveItem="saveItem($event, currentCategory.id)"
+				@deleteItem="removeItem($event)"
+				@toggleComplete="toggleComplete($event)"
+			/>
+		</div>
+	</div>
+	<AppFooter />
 </template>
 
 <script lang="ts">
-import SaveCategoryKey from '@/utils/symbols/SaveCategoryKey'
-import GetCategoriesKey from '@/utils/symbols/GetCategoriesKey'
-import DeleteCategoryKey from '@/utils/symbols/DeleteCategoryKey'
-import Sidebar from '@/components/app/Sidebar.vue'
-import { addCategory, fetchCategories, deleteCategory } from '@/api/categories'
-import ICategory from '@/utils/interfaces/Category'
-import { ref, provide, Ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import AppSidebar from '@/components/app/Sidebar.vue'
+import ListCard from '@/components/ListCard.vue'
+import AppFooter from '@/components/app/Footer.vue'
 
-// import { defineAsyncComponent } from '@vue/runtime-core'
+import useCategories from '@/composables/useCategories'
+import useItems from '@/composables/useItems'
+
+import { watch, computed } from 'vue'
+
 export default {
 	components: {
-		Sidebar
-		// Sidebar: defineAsyncComponent(() => import('@/components/app/Sidebar.vue'))
+		AppSidebar,
+		ListCard,
+		AppFooter
 	},
 
 	setup (): Record<string, unknown> {
-		const route = useRoute()
-        const router = useRouter()
-		// Array<ICategory>
-		let categories: Ref<ICategory[]> = ref<ICategory[]>([])
 
-		const saveCategory = async (category: ICategory) => {
-			const newCategory = { ...category }
-			newCategory.ts = new Date().getTime()
-			return await addCategory(category)
+		const { 
+			categories, 
+			currentCategory, 
+			categoryDeleted, 
+			categorySelected 
+		} = useCategories()
+
+		const {
+			removeItem,
+			toggleComplete,
+			cleanItems,
+			saveItem,
+			items,
+			getItems
+		} = useItems()
+
+		const finishDeletion = (id: number) => {
+			categoryDeleted(id)
+			cleanItems(id)
 		}
 
-		const getCategories = async () => {
-			categories.value = await fetchCategories() as ICategory[]
-			if (!categories.value.length) categories.value = [{ name: 'Add a Category!'}]
-		}
-
-		const removeCategory = async (id: string) => {
-			return await deleteCategory(id)
-		}
-
-		const categoryDeleted = (e: string) => {
-			categories.value = categories.value.filter(cat => cat?.id !== e)
-			console.log(typeof route.params.id)
-			console.log(typeof e)
-			if (route.params.id === `${e}`) router.push({ name: 'Default'})
-			// console.log(filtered)
-		}
-
-		onMounted(() => {
-			getCategories()
+		const filteredItems = computed(() => {
+			if (currentCategory.value) {
+				return items.value.filter(item => item.cat === currentCategory.value?.id)
+			} else {
+				return []
+			}
 		})
 
-		provide(SaveCategoryKey, saveCategory)
-		provide(GetCategoriesKey, getCategories)
-		provide(DeleteCategoryKey, removeCategory)
+		watch(currentCategory, getItems)
 
 		return {
 			categories,
-			categoryDeleted
+			categoryDeleted,
+			categorySelected,
+			currentCategory,
+			saveItem,
+			items: filteredItems,
+			finishDeletion,
+			removeItem,
+			toggleComplete
 		}
 	}
 }
@@ -87,6 +100,17 @@ export default {
 	}
 
 	.main {
+		display: flex;
 		margin-left: 270px;
+		flex-direction: column
+	}
+
+	.container {
+		display: flex;
+		height: 100vh;
+		width: 100%;
+		justify-content: center;
+		align-items: center;
+		align-content: center;
 	}
 </style>

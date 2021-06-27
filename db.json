@@ -1,3 +1,58 @@
 {
-  "categories": []
+  "categories": [
+    {
+      "name": "Potatoes",
+      "ts": 1624763231059,
+      "id": 1
+    },
+    {
+      "name": "Breakfast",
+      "ts": 1624763243826,
+      "id": 2
+    }
+  ],
+  "items": [
+    {
+      "title": "Boil 'em",
+      "ts": 1624763260294,
+      "cat": 1,
+      "comp": false,
+      "id": 1
+    },
+    {
+      "title": "Mash 'em",
+      "ts": 1624763262709,
+      "cat": 1,
+      "comp": false,
+      "id": 2
+    },
+    {
+      "title": "Stick 'em in a stew!",
+      "ts": 1624763268207,
+      "cat": 1,
+      "comp": false,
+      "id": 3
+    },
+    {
+      "title": "Eggs",
+      "ts": 1624763277522,
+      "cat": 2,
+      "comp": false,
+      "id": 4
+    },
+    {
+      "title": "Tomatoes",
+      "ts": 1624763279760,
+      "cat": 2,
+      "comp": true,
+      "id": 5
+    },
+    {
+      "title": "Nice crispy bacon",
+      "ts": 1624763285495,
+      "cat": 2,
+      "comp": false,
+      "id": 6
+    }
+  ]
 }

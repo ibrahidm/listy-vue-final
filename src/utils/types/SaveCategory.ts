@@ -1,5 +1,5 @@
 import ICategory from "../interfaces/Category"
 
-type saveCategory = (category: ICategory) => Promise<ICategory>
+type saveCategory = (category: ICategory) => Promise<void>
 
 export default saveCategory

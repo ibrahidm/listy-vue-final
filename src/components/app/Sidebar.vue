@@ -6,19 +6,30 @@
     <div class="sidebar-divider" />
     <div class="sidebar-content-slot">
       <SidebarItem
+        v-show="!categories.length"
+        :category="{ name: 'Add a Category!'}"
+        @click="$refs.add.focus()"
+      />
+      <SidebarItem
         v-for="(category, i) in categories"
         :key="i"
         :category="category"
         @categoryDeleted="$emit('categoryDeleted', $event)"
+        @categorySelected="$emit('categorySelected', $event)"
       />
     </div>
     <div class="sidebar-action-slot">
-      <input class="sidebar-add-field" v-model="newCategory" type="text" />
+      <input class="sidebar-add-field" 
+        ref="add"
+        v-model="newCategory" 
+        type="text" 
+        @keypress="$event.keyCode === 13 && saveNewCategory(newCategory)"
+      />
       <input
         class="sidebar-add-button"
         type="submit"
-        alue="Add"
-        @click="saveNewCateogry(newCategory)"
+        value="Add"
+        @click="saveNewCategory(newCategory)"
       />
     </div>
   </div>
@@ -27,10 +38,8 @@
 <script lang="ts">
 
 import SidebarItem from '@/components/SidebarItem.vue';
-import { ref, toRefs, inject } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, inject } from 'vue';
 import SaveCategoryKey from '@/utils/symbols/SaveCategoryKey';
-import GetCategoriesKey from '@/utils/symbols/GetCategoriesKey';
 
 
 export default {
@@ -41,30 +50,22 @@ export default {
   props: {
     categories: {
       type: Array,
-      required: true,
+      required: true
     },
   },
 
-  setup(props: Record<string, unknown>): Record<string, unknown> {
-    const router = useRouter();
+  setup(): Record<string, unknown> {
     const newCategory = ref('');
-    const { categories: listyCategories } = toRefs(props);
     const saveCategory = inject(SaveCategoryKey);
-    const getCategories = inject(GetCategoriesKey);
 
-    const saveNewCateogry = async (name: string) => {
-      let newCat;
-      if (name.length && saveCategory) newCat = await saveCategory({ name });
+    const saveNewCategory = async (name: string) => {
+      if (name.length && saveCategory) await saveCategory({ name });
       newCategory.value = '';
-      if (getCategories) getCategories();
-      if (newCat) router.replace(`/${newCat.id}`);
     };
 
     return {
-      listyCategories,
-      saveNewCateogry,
+      saveNewCategory,
       newCategory,
-
     };
   },
 };
@@ -79,7 +80,7 @@ export default {
   width: 270px;
   height: 100%;
   border-right: 1px solid #dfe1e5;
-  background: #e8f0f2;
+  background-color: #e8f0f2;
 }
 
 .sidebar-content-slot {
@@ -87,6 +88,7 @@ export default {
   display: flex;
   flex-direction: column;
   overflow: auto;
+  overflow-x: hidden;
   min-height: 120px;
 }
 
